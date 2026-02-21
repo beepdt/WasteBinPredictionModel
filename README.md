@@ -43,13 +43,23 @@ Key columns:
    - `fill_ratio_estimate`: The estimated waste divided by the bin capacity.
    - `adjusted_fill_ratio`: Multiplier applied during festival weeks.
 
-3. **Modeling**
-   - Selected **Random Forest Classifier** because it efficiently handles categorical and numerical variables simultaneously, and is highly robust in managing interactions between multiple variables (e.g., location and weather).
-   
+3. **Modeling — Random Forest with Hyperparameter Tuning**
+   - Selected **Random Forest Classifier** for its ability to handle complex feature interactions (e.g., location type × weather × festival week), robustness to outliers, and built-in feature importance.
+   - Used **GridSearchCV** (5-fold cross-validation, F1 scoring) to tune the following hyperparameters:
+     | Hyperparameter | Search Values |
+     |---|---|
+     | `n_estimators` | 50, 100, 200, 300 |
+     | `max_depth` | None, 10, 20, 30 |
+     | `min_samples_split` | 2, 5, 10 |
+     | `min_samples_leaf` | 1, 2, 4 |
+     | `max_features` | sqrt, log2 |
+   - The best parameters and best cross-validation F1 score are printed by the script at runtime.
+
 4. **Evaluation**
-   - The model achieved an accuracy and F1-score of ~88.7%.
-   - **Precision**: High precision ensures that the operations team doesn't send trucks to empty bins, directly saving fuel.
-   - **Recall**: High recall ensures that overflowing bins are not bypassed, thereby reducing hygiene complaints.
+   - The tuned model is evaluated on a held-out 20% test set (stratified split).
+   - Metrics reported: **Accuracy**, **Precision**, **Recall**, **F1 Score**, and a full **Classification Report**.
+   - **Precision**: High precision ensures the operations team doesn't dispatch trucks to non-full bins, saving fuel and labour.
+   - **Recall**: High recall ensures overflowing bins are not missed, reducing hygiene complaints.
 
 ## Business Interpretation & Impact
 - **Cost Reduction**: Predicting non-full bins avoids wasted labor hours and vehicle wear-and-tear.
